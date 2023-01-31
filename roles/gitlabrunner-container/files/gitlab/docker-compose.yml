@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  gitlab-runner:
+    image: nexus.DOMAIN/DEPARTMENT/infrastructure/gitlab-runner_rr_ca:v15.3.0
+    container_name: gitlab_runner
+    restart: always
+    volumes:
+      - gitlab-runner-config-volume:/etc/gitlab-runner
+      - gitlab-runner-data-volume:/opt
+      - /var/run/docker.sock:/var/run/docker.sock
+volumes:
+    gitlab-runner-config-volume:
+    gitlab-runner-data-volume:

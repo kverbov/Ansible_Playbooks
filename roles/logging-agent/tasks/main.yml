@@ -1,0 +1,37 @@
+- name: ensure that compose dir exist
+  file:
+    path: "/tmp/{{role_name}}/"
+    state: directory
+  tags:
+    - ct-deploy
+
+- name: copy compose files
+  template:
+    src: docker-compose.yml.j2
+    dest: "/tmp/{{role_name}}/docker-compose.yml"
+  tags:
+    - ct-deploy
+
+- name: deploy "{{role_name}}" compose
+  docker_compose:
+    recreate: smart
+    stopped: no
+    project_name: "{{role_name}}"
+    project_src: "/tmp/{{role_name}}"
+  tags:
+    - ct-deploy
+
+- name: copy kibana config from template to config-volume
+  template:
+    src: filebeat.yml.j2
+    dest: "/var/lib/docker/volumes/{{role_name}}_filebeat-config-volume/_data/filebeat.yml"
+  tags:
+    - ct-prep
+
+- name: restart compose ct
+  docker_compose:
+    restarted: yes
+    project_name: "{{role_name}}"
+    project_src: "/tmp/{{role_name}}"
+  tags:
+    - ct-deploy

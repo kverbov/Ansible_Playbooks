@@ -1,0 +1,42 @@
+---
+#- name: change hostname to inventory's FQDN
+#  command: hostnamectl set-hostname "{{ inventory_hostname }}"
+
+#- name: copy ps1_overwrite to profile.d
+#  template:
+#    src: BANK_bashrc.sh.j2
+#    dest: /etc/profile.d/BANK_bashrc.sh
+
+- name: copy nexus certs to pki dir
+  copy:
+    src: "certs/{{ item }}"
+    dest: "/etc/pki/ca-trust/source/anchors/{{ item }}"
+  loop:
+    - RSB-SSPMOSCERT1.crt
+    - RSB-SSPMOSCERTR.crt
+
+- name: enable new certs
+  command: update-ca-trust
+
+- name: install the latest version of python3-devel
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - python38-devel
+    - python38-pip
+    - libsodium-devel
+    - gcc 
+    - gcc-c++
+    - make
+    - htop
+    - mc
+    - netcat
+    - tcpdump
+
+- name: configure pip sources
+  command: "{{ item }}"
+  loop:
+    - 'pip3.8 config --user set global.index https://nexus.DOMAIN/repository/pypi-org-proxy/pypi'
+    - 'pip3.8 config --user set global.index-url https://nexus.DOMAIN/repository/pypi-org-proxy/simple'
+    - 'pip3.8 config --user set global.trusted-host nexus.DOMAIN'

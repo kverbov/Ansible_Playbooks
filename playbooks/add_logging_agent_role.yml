@@ -1,0 +1,6 @@
+---
+- name: deploy logging-agent role
+  hosts: LOGGING_AGENTS
+
+  roles: 
+    - logging-agent

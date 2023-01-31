@@ -1,0 +1,4 @@
+elastic_pass: ""
+elastic_user: "elastic"
+elastic_host: "elastic1.prod.DEPARTMENT.DOMAIN"
+kibana_host: "elastic1.prod.DEPARTMENT.DOMAIN"

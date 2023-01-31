@@ -1,0 +1,28 @@
+- name: ensure that compose dir exist
+  file:
+    path: "/tmp/DEPARTMENT-reports-server/"
+    state: directory
+  tags:
+    - ct-deploy
+
+- name: copy compose files
+  template:
+    src: docker-compose.yml.j2
+    dest: "/tmp/DEPARTMENT-reports-server/docker-compose.yml"
+  tags:
+    - ct-deploy
+
+- name: print variables
+  debug:
+    msg: "{{ DOCKER_HTML_PDF_WEB_IMG_FULL_TAG }}"
+
+- name: deploy DEPARTMENT-reports role
+  docker_compose:
+    recreate: smart
+    stopped: no
+    project_name: "DEPARTMENT-reports"
+    project_src: "/tmp/DEPARTMENT-reports-server"
+  #register: output
+  #debugger: on_failed
+  tags:
+    - ct-deploy

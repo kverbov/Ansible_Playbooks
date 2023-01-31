@@ -1,0 +1,6 @@
+---
+- name: deploy monitoring server role
+  hosts: MONITORING_SERVERS
+
+  roles: 
+    - monitoring-server

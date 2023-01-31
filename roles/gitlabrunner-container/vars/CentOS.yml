@@ -1,0 +1,4 @@
+packages:
+      - docker-ce
+      - python-docker-py
+      - python38-pip

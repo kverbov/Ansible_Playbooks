@@ -1,0 +1,6 @@
+---
+- name: deploy common role
+  hosts: ALL_DEPARTMENT
+
+  roles: 
+    - common

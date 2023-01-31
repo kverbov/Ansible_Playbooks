@@ -1,0 +1,146 @@
+groups:
+- name: containers_check
+  rules:
+  - alert: portainer_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="portainer"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "portainer CT down on {{ $labels.instance }}"
+
+  - alert: postgres_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="postgres"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "postgres CT down on {{ $labels.instance }}"
+
+  - alert: redis_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="redis"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "redis CT down on {{ $labels.instance }}"
+
+  - alert: rabbit_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="rabbit"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "rabbit CT down on {{ $labels.instance }}"
+
+  - alert: elastic_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="elastic"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "portainer CT down on {{ $labels.instance }}"
+
+  - alert: kibana_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="kibana"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "kibana CT down on {{ $labels.instance }}"
+
+  - alert: logstash_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="logstash"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "logstash CT down on {{ $labels.instance }}"
+
+  - alert: grafana_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="grafana"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "grafana CT down on {{ $labels.instance }}"
+
+  - alert: mbtiles_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="mbtiles"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "mbtiles CT down on {{ $labels.instance }}"
+
+  - alert: monitor_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="monitor"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "monitor CT down on {{ $labels.instance }}"
+
+  - alert: frontend_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="frontend"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "frontend CT down on {{ $labels.instance }}"
+
+  - alert: streamsarchivist_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="streamsarchivist"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "streamsarchivist CT down on {{ $labels.instance }}"
+
+  - alert: dataanlyzer_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="dataanlyzer"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "dataanlyzer CT down on {{ $labels.instance }}"
+
+  - alert: portainer_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="portainer"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "portainer CT down on {{ $labels.instance }}"
+
+  - alert: webapi_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="webapi"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "webapi CT down on {{ $labels.instance }}"
+
+  - alert: auth_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="auth"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "auth CT down on {{ $labels.instance }}"
+
+  - alert: metric-receiver_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="metric-receiver"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "metric-receiver CT down on {{ $labels.instance }}"
+
+  - alert: license_down
+    expr: absent(container_cpu_usage_seconds_total{instance="svarog.dev.dc.integer-soft.ru:9323",container_label_com_docker_compose_service="license"})
+    for: 5m
+    labels:
+      severity: alert
+    annotations:
+      summary: "license CT down on {{ $labels.instance }}"

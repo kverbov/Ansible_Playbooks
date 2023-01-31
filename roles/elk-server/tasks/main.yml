@@ -1,0 +1,59 @@
+- name: ensure that compose dir exist
+  file:
+    path: "/tmp/elk-server/"
+    state: directory
+  tags:
+    - ct-deploy
+
+- name: copy compose files
+  template:
+    src: docker-compose.yml.j2
+    dest: "/tmp/elk-server/docker-compose.yml"
+  tags:
+    - ct-deploy
+
+- name: deploy elk role
+  docker_compose:
+    recreate: smart
+    stopped: no
+    project_name: "elk"
+    project_src: "/tmp/elk-server"
+  tags:
+    - ct-deploy
+
+- name: copy kibana config from template to config-volume
+  template:
+    src: kibana.yml.j2
+    dest: "/var/lib/docker/volumes/elk_kibana-config-volume/_data/kibana.yml"
+  tags:
+    - ct-prep
+
+- name: copy elastic config from template to config-volume
+  template:
+    src: templates/elasticsearch.yml.j2
+    dest: "/var/lib/docker/volumes/elk_elastic-config-volume/_data/elasticsearch.yml"
+  tags:
+    - ct-prep
+
+- name: copy logstash config from template to config-volume
+  template:
+    src: templates/logstash.yml.j2
+    dest: "/var/lib/docker/volumes/elk_logstash-config-volume/_data/logstash.yml"
+  tags:
+    - ct-prep
+
+
+- name: copy logstash pipelines config from template to config-volume
+  template:
+    src: templates/logstash.conf.j2
+    dest: "/var/lib/docker/volumes/elk_logstash-pipelines-volume/_data/logstash.conf"
+  tags:
+    - ct-prep
+
+- name: restart elk
+  docker_compose:
+    restarted: yes
+    project_name: "elk"
+    project_src: "/tmp/elk-server"
+  tags:
+    - ct-deploy

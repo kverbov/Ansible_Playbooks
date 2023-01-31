@@ -1,0 +1,25 @@
+---
+- hosts: srv1.prod.DEPARTMENT.DOMAIN
+  tasks:
+    - name: archive data from prod
+      archive:
+        path: "/var/lib/docker/volumes/DEPARTMENT-app-prod_{{ DEPARTMENT_media_volume_name }}/"
+        dest: "/tmp/DEPARTMENT_media_{{ lookup('pipe', 'date +%Y-%m-%d') }}.tar.gz"
+
+    - name: copy data from prod-server to ansible host
+      fetch:
+        src: "/tmp/DEPARTMENT_media_{{ lookup('pipe', 'date +%Y-%m-%d') }}.tar.gz"
+        dest: /tmp/
+        flat: yes
+
+    - name: copy data from prod-server to backup-server
+      copy:
+        src: "/tmp/DEPARTMENT_media_{{ lookup('pipe', 'date +%Y-%m-%d') }}.tar.gz"
+        dest: /media/DEPARTMENT_static_files/
+      delegate_to: backups.prod.DEPARTMENT.DOMAIN
+
+    - name: unarchive data from prod-server to cert-server
+      unarchive:
+        src: "/tmp/DEPARTMENT_media_{{ lookup('pipe', 'date +%Y-%m-%d') }}.tar.gz"
+        dest: "/var/lib/docker/volumes/DEPARTMENT-app-cert_{{ DEPARTMENT_media_volume_name }}/"
+      delegate_to: cert-VIP-Clients.DOMAIN

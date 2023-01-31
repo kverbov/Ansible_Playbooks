@@ -1,0 +1,26 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      monitor: 'prometheus1'
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['monitoring.prod.DEPARTMENT.DOMAIN:9093']
+
+rule_files:
+  - "alerting_rules.yml"
+  - "svarog_ct_rules.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: node
+    static_configs:
+      - targets: ['srv1.prod.DEPARTMENT.DOMAIN:9100']
+      - targets: ['cert-VIP-Clients.DOMAIN:9100']

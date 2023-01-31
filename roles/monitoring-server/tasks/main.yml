@@ -1,0 +1,44 @@
+- name: ensure that compose dir exist
+  file:
+    path: "/tmp/monitoring-server/"
+    state: directory
+  tags:
+    - ct-deploy
+
+- name: copy compose files
+  template:
+    src: docker-compose.yml.j2
+    dest: "/tmp/monitoring-server/docker-compose.yml"
+  tags:
+    - ct-deploy
+
+- name: deploy monitoring role
+  docker_compose:
+    recreate: smart
+    stopped: no
+    project_name: "monitoring"
+    project_src: "/tmp/monitoring-server"
+  tags:
+    - ct-deploy
+
+- name: copy prometheus config from template to config-volume
+  template:
+    src: prometheus.yml.j2
+    dest: "/var/lib/docker/volumes/monitoring_prometheus-config-volume/_data/prometheus.yml"
+  tags:
+    - ct-prep
+
+- name: copy alerting_rules config from template to config-volume
+  copy:
+    src: templates/alerting_rules.yml.j2
+    dest: "/var/lib/docker/volumes/monitoring_prometheus-config-volume/_data/alerting_rules.yml"
+  tags:
+    - ct-prep
+
+- name: copy alertmanager config from template to config-volume
+  copy:
+    src: templates/alertmanager.yml.j2
+    dest: "/var/lib/docker/volumes/monitoring_alertmanager-config-volume/_data/alertmanager.yml"
+  tags:
+    - ct-prep
+

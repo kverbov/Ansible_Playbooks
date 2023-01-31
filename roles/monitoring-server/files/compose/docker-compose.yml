@@ -1,0 +1,61 @@
+version: '2.4'
+
+networks:
+    network:
+
+services:
+  prometheus:
+    image: ${MONITORING_PROMETHEUS_FULL_TAG}
+    restart: always
+    hostname: "${MONITORING_SERVER_HOSTNAME}"
+    command: 
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=180d'
+    ports:
+      - 9090:9090/tcp
+    volumes:
+      - prometheus-data-volume:/prometheus
+      - prometheus-config-volume:/etc/prometheus/
+    networks:
+      network:
+        aliases:
+          - prometheus
+
+  alertmanager:
+    image: ${MONITORING_ALERTMANAGER_FULL_TAG}
+    restart: always
+    hostname: "${MONITORING_SERVER_HOSTNAME}"
+    command: "--config.file=/alertmanager-config/alertmanager.yml"
+    ports:
+      - 9093:9093/tcp
+    volumes:
+      - alertmanager-config-volume:/alertmanager-config
+    networks:
+      network:
+        aliases:
+          - alertmanager
+
+  grafana:
+    image: ${MONITORING_GRAFANA_FULL_TAG}
+    restart: always
+    hostname: "${MONITORING_SERVER_HOSTNAME}"
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - grafana-config-volume:/etc/grafana/
+      - grafana-data-volume:/var/lib/grafana
+    networks:
+      network:
+        aliases:
+          - grafana
+    environment:
+      - "GF_SECURITY_ADMIN_PASSWORD=${MONITORING_GRAFANA_PASS}"
+      - "GF_INSTALL_PLUGINS=grafana-polystat-panel,yesoreyeram-boomtable-panel"
+
+volumes:
+    prometheus-data-volume:
+    prometheus-config-volume:
+    alertmanager-config-volume:
+    grafana-config-volume:
+    grafana-data-volume:

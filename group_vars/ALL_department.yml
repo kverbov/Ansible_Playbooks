@@ -1,0 +1,6 @@
+DEPARTMENT_media_volume_name: web-app-storage-files-volume
+ansible_become_password: ""
+ansible_become: yes
+ansible_python_interpreter: /usr/bin/python3
+#ansible_become_user: rrsDEPARTMENT@BANK.DOMAIN
+gitlab_url: https://gitlab.DOMAIN/

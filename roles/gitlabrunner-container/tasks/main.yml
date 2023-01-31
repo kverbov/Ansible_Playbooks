@@ -1,0 +1,86 @@
+- name: create volumes for gitlab-container
+  docker_compose:
+    recreate: smart
+    pull: yes
+    project_name: "gitlab-{{ environment_tag }}"
+    definition:
+      version: '2'
+      services:
+        gitlab-runner:
+          image: nexus.DOMAIN/DEPARTMENT/infrastructure/gitlab-runner_rr_ca:v15.3.0
+          container_name: gitlab_runner
+          volumes:
+            - gitlab-runner-config-volume:/etc/gitlab-runner
+            - gitlab-runner-certs-volume:/etc/gitlab-runner/certs/
+            - gitlab-runner-data-volume:/opt
+            - /var/run/docker.sock:/var/run/docker.sock
+      volumes:
+        gitlab-runner-config-volume:
+        gitlab-runner-certs-volume:
+        gitlab-runner-data-volume:
+  tags:
+    - register
+
+- name: copy ca cert to gitlab cert-volume
+  copy:
+    src: ca-bundle.crt
+    dest: "/var/lib/docker/volumes/gitlab-{{ environment_tag }}_gitlab-runner-certs-volume/_data/ca-bundle.crt"
+  tags:
+    - register
+
+- name: register gitlab runner containers
+  docker_compose:
+    recreate: smart
+    pull: yes
+    project_name: "gitlab-{{ environment_tag }}"
+    definition:
+      version: '2'
+      services:
+        gitlab-runner:
+          image: nexus.DOMAIN/DEPARTMENT/infrastructure/gitlab-runner_rr_ca:v15.3.0
+          container_name: gitlab_runner
+          command: >
+            register -n
+            --url "{{ gitlab_url }}"
+            --registration-token "{{ runner_reg_token }}"
+            --tls-ca-file /etc/gitlab-runner/certs/ca-bundle.crt
+            --executor docker
+            --description "{{ product_name }} {{ environment_tag }} Docker Runner"
+            --tag-list "docker, {{ product_name }} , {{ environment_tag }}"
+            --docker-image "nexus.DOMAIN/general/docker/compose:rr-1.29.2"
+            --docker-volumes /var/run/docker.sock:/var/run/docker.sock
+          volumes:
+            - gitlab-runner-config-volume:/etc/gitlab-runner
+            - gitlab-runner-certs-volume:/etc/gitlab-runner/certs/
+            - gitlab-runner-data-volume:/opt
+            - /var/run/docker.sock:/var/run/docker.sock
+      volumes:
+        gitlab-runner-config-volume:
+        gitlab-runner-certs-volume:
+        gitlab-runner-data-volume:
+  tags:
+    - register
+
+- name: deploy gitlab runner containers
+  docker_compose:
+    recreate: smart
+    pull: yes
+    project_name: "gitlab-{{ environment_tag }}"
+    definition:
+      version: '2'
+      services:
+        gitlab-runner:
+          image: nexus.DOMAIN/DEPARTMENT/infrastructure/gitlab-runner_rr_ca:v15.3.0
+          container_name: gitlab_runner
+          restart: always
+          volumes:
+            - gitlab-runner-config-volume:/etc/gitlab-runner
+            - gitlab-runner-certs-volume:/etc/gitlab-runner/certs/
+            - gitlab-runner-data-volume:/opt
+            - /var/run/docker.sock:/var/run/docker.sock
+      volumes:
+        gitlab-runner-config-volume:
+        gitlab-runner-certs-volume:
+        gitlab-runner-data-volume:
+  tags:
+    - update

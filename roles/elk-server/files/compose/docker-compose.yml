@@ -1,0 +1,57 @@
+version: '3.2'
+
+services:
+  elasticsearch:
+		image:
+    volumes:
+      - elastic-config-volume:/usr/share/elasticsearch/config/:ro,z
+      - elastic-data-volume:/usr/share/elasticsearch/data:z
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx2048m -Xms2048m"
+      ELASTIC_PASSWORD: "{{ elastic_pass }}"
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - network
+
+  logstash:
+		image:
+    volumes:
+      - logstash-config-volume:/usr/share/logstash/config/:ro,z
+      - logstash-pipelines-volume:/usr/share/logstash/pipeline:ro,z
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx2048m -Xms2048m"
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+
+  kibana:
+		image:
+    volumes:
+      - kibana-config-volume:/usr/share/kibana/config/:ro,z
+    ports:
+      - "5601:5601"
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+
+networks:
+  network:
+
+volumes:
+	elastic-config-volume:
+	elastic-data-volume:
+	kibana-config-volume:
+	logstash-config-volume:
+  logstash-pipelines-volume:

@@ -1,0 +1,6 @@
+---
+- name: deploy elk-server role
+  hosts: ELK_SERVERS
+
+  roles: 
+    - elk-server

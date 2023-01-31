@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  filebeat:
+    image: nexus.DOMAIN/DEPARTMENT/infrastructure/filebeat:7.16.3 
+    hostname: "filebeat-{{ inventory_hostname }}"
+    user: root
+    volumes:
+      - filebeat-config-volume:/usr/share/filebeat/
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      - /var/log/:/var/log/:ro
+      - /var/log/audit/:/var/log/audit/:ro
+    environment:
+      ELASTICSEARCH_HOST: "{{ elastic_host }}"
+      KIBANA_HOST: "{{ kibana_host }}"
+      ELASTICSEARCH_USERNAME: elastic
+      ELASTICSEARCH_PASSWORD: "{{ elastic_pass }}"
+    command: ["--strict.perms=false"]
+volumes:
+  filebeat-config-volume:

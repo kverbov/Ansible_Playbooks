@@ -1,0 +1,136 @@
+version: '3.9'
+
+networks:
+    network:
+
+services:
+# PDF containers
+  html-pdf-web:
+    image: ${DOCKER_HTML_PDF_WEB_IMG_FULL_TAG}
+    restart: always
+    ports:
+      - "${PDF_SERVICE_PORT:-8021}:80"
+    environment:
+      - PHP_HOST=${PDF_PHP_HOST:-php} # Имя контейнера с php для fastcgi_pass в конфиге nginx
+    depends_on:
+      - html-pdf-php
+    volumes:
+      - html-pdf-web-cache:/app/web/cache
+      - /etc/ssl:/etc/ssl
+      - /tmp/pki:/etc/pki
+    mem_limit: 32G
+    cpus: 16
+    networks:
+      network:
+        aliases:
+          - html-pdf-web
+          - html-pdf-web.domain
+
+  html-pdf-php:
+    image: ${DOCKER_HTML_PDF_PHP_IMG_FULL_TAG}
+    restart: always
+    environment:
+      - PDF_TO_HTML_API_KEY=${PDF_TO_HTML_API_KEY:-210042cad4356ad5dc0a720c18b55d8e53d4c274}
+      - PDF_LOG_FILE_LIFE_TIME=${PDF_LOG_FILE_LIFE_TIME:-1 month}
+      - PDF_DEBUG_NO_REMOVING_CACHE=${PDF_DEBUG_NO_REMOVING_CACHE:-0}
+      - PDF_RABBIT_HOST=${PDF_RABBIT_HOST:-guest:guest@rabbitmq:5672/}
+      - PDF_REDIS_HOST=${PDF_REDIS_HOST:-redis:6379}
+      - PDF_WEB_DOMAIN=${PDF_WEB_DOMAIN:-nginx} # Имя контейнера с nginx
+      - PDF_CHROME_URL=${PDF_CHROME_URL:-http://chrome:4444} # Url контейнера с Chrome
+    depends_on:
+      - html-pdf-chrome
+    volumes:
+      - html-pdf-web-cache:/app/web/cache
+      - /etc/ssl:/etc/ssl
+      - /tmp/pki:/etc/pki
+    mem_limit: 32G
+    cpus: 16
+    networks:
+      network:
+        aliases:
+          - html-pdf-php
+          - html-pdf-php.domain
+
+  html-pdf-queue:
+    image: ${DOCKER_HTML_PDF_QUEUE_IMG_FULL_TAG}
+    entrypoint: ["/bin/sh", "-c", "php -f /app/queue_printer.php"]
+    restart: always
+    environment:
+      - PDF_LOG_FILE_LIFE_TIME=${PDF_LOG_FILE_LIFE_TIME:-1 month}
+      - PDF_DEBUG_NO_REMOVING_CACHE=${PDF_DEBUG_NO_REMOVING_CACHE:-0}
+      - PDF_RABBIT_HOST=${PDF_RABBIT_HOST:-guest:guest@rabbitmq:5672/}
+      - PDF_REDIS_HOST=${PDF_REDIS_HOST:-redis:6379}
+      - PDF_WEB_DOMAIN=${PDF_WEB_DOMAIN:-nginx} # Имя контейнера с nginx
+      - PDF_CHROME_URL=${PDF_CHROME_URL:-http://chrome:4444} # Url контейнера с Chrome
+    depends_on:
+      - html-pdf-chrome
+      - html-pdf-redis
+      - html-pdf-rabbitmq
+    volumes:
+      - html-pdf-web-cache:/app/web/cache
+      - /etc/ssl:/etc/ssl
+      - /tmp/pki:/etc/pki
+    mem_limit: 32G
+    cpus: 16
+    deploy:
+      repliccc: 16
+    networks:
+      network:
+        aliases:
+          - html-pdf-queue
+
+  html-pdf-chrome:
+    image: ${DOCKER_HTML_PDF_CHROME_IMG_FULL_TAG}
+    restart: always
+    init: true
+    mem_limit: 32G
+    mem_reservation: 4G
+    cpus: 16
+    deploy:
+      repliccc: 17
+    networks:
+      network:
+        aliases:
+          - html-pdf-chrome
+
+  html-pdf-redis:
+    image: ${DOCKER_REDIS_IMG_FULL_TAG}
+    restart: always
+    mem_limit: 32G
+    cpus: 16
+    networks:
+      network:
+        aliases:
+          - html-pdf-redis
+
+  html-pdf-rabbitmq:
+    image: ${DOCKER_RABBITMQ_IMG_FULL_TAG}
+    restart: always
+    mem_limit: 32G
+    cpus: 16
+    #ports:
+      #- "${PDF_RABBIT_PORT:-8022}:5672"
+    networks:
+      network:
+        aliases:
+          - html-pdf-rabbitmq
+
+  pdf-static-web:
+    image: ${DOCKER_PDF_STATIC_WEB_IMG_FULL_TAG}
+    restart: always
+    ports:
+      - "${PDF_STATIC_PORT:-8020}:80"
+    volumes:
+      - /etc/ssl:/etc/ssl
+      - /tmp/pki:/etc/pki
+    mem_limit: 32G
+    cpus: 16
+    networks:
+      network:
+        aliases:
+          - pdf-static-web
+          - pdf-static-web.domain
+          
+volumes:
+  html-pdf-web-cache:
+

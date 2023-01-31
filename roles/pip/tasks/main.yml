@@ -1,0 +1,14 @@
+---
+# tasks file for pip
+- name: Configure Global pip.conf
+  template:
+    src: pip.conf.j2
+    dest: /etc/pip.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Packages with Pip
+  pip:
+    name: "{{ item }}"
+  loop: "{{ pip_packages }}"

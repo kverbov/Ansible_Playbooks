@@ -1,0 +1,6 @@
+---
+- name: Deploy runner container
+  hosts: GITLAB_RUNNERS
+
+  roles:
+      - gitlabrunner-container

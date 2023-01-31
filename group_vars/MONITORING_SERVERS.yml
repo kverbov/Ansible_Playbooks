@@ -1,0 +1,5 @@
+monitoring_prometheus_full_tag: "nexus.DOMAIN/DEPARTMENT/infrastructure/prometheus:v2.31.1"
+monitoring_alertmanager_full_tag: "nexus.DOMAIN/general/alertmanager:v0.19.0"
+monitoring_grafana_full_tag: "nexus.DOMAIN/general/grafana:6.5.1"
+monitoring_grafana_pass: ''
+monitoring_server_hostname: "{{ inventory_hostname }}"

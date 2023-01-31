@@ -1,0 +1,22 @@
+---
+docker_version: '20.10.6-3'
+docker_scan_plugin_version: '0.7.0-3'
+containerd_version: '1.4.4-3.1'
+docker_rpm_source: url
+docker_rpm_base_url: https://nexus.DOMAIN/repository/raw-distribs/jenkins
+docker_pkg_url: 
+  - "{{ docker_rpm_base_url }}/{{ docker_package }}-{{ docker_version }}.el8.x86_64.rpm"
+  - "{{ docker_rpm_base_url }}/{{ docker_package }}-cli-{{ docker_version }}.el8.x86_64.rpm"
+  - "{{ docker_rpm_base_url }}/{{ docker_package }}-rootless-extras-{{ docker_version }}.el8.x86_64.rpm"
+  - "{{ docker_rpm_base_url }}/docker-scan-plugin-{{ docker_scan_plugin_version }}.el8.x86_64.rpm"
+  - "{{ docker_rpm_base_url }}/containerd.io-{{ containerd_version }}.el8.x86_64.rpm"
+
+docker_data_root: "/var/lib/docker"
+nexus_user: trrsDEPARTMENT
+nexus_pass: ''
+docker_config:
+  data-root: "{{ docker_data_root }}"
+pip_packages:
+  - docker
+  - docker-compose
+...

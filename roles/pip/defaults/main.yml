@@ -1,0 +1,7 @@
+---
+# defaults file for pip
+pip_index: https://nexus.DOMAIN/repository/pypi-org-proxy/pypi
+pip_index_url: https://nexus.DOMAIN/repository/pypi-org-proxy/simple
+trusted_host: nexus.DOMAIN
+
+pip_packages: []

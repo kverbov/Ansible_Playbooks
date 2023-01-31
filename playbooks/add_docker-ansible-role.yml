@@ -1,0 +1,7 @@
+---
+- name: install docker package
+  hosts: DOCKER_HOSTS
+
+  roles: 
+    - docker-ansible-role
+    - pip
